@@ -27,3 +27,9 @@ Revision history for App::Dochazka
 0.153  2014-08-08 11:40 CEST
 - testing release script
 
+0.154  2014-08-08 12:13 CEST
+- Build.PL: more adjustments of build_requires, requires, release scripts
+
+0.155  2014-08-08 12:14 CEST
+- add a sleep to release script to allow NFS to settle
+

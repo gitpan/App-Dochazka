@@ -1,8 +1,9 @@
 NAME
-    App::Dochazka Attendance and Time Tracking System - shared modules
+    App::Dochazka - Dochazka Attendance and Time Tracking System shared
+    modules
 
 VERSION
-    Version 0.153
+    Version 0.155
 
 DESCRIPTION
     This distro contains modules that are used by both the server

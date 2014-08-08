@@ -45,18 +45,18 @@ use warnings;
 
 =head1 NAME
 
-App::Dochazka Attendance and Time Tracking System - shared modules
+App::Dochazka - Dochazka Attendance and Time Tracking System shared modules
 
 
 
 
 =head1 VERSION
 
-Version 0.153
+Version 0.155
 
 =cut
 
-our $VERSION = '0.153';
+our $VERSION = '0.155';
 
 
 

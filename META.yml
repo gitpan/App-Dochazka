@@ -18,34 +18,34 @@ name: App-Dochazka
 provides:
   App::Dochazka:
     file: lib/App/Dochazka.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Activity:
     file: lib/App/Dochazka/Model/Activity.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Employee:
     file: lib/App/Dochazka/Model/Employee.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Interval:
     file: lib/App/Dochazka/Model/Interval.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Lock:
     file: lib/App/Dochazka/Model/Lock.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Privhistory:
     file: lib/App/Dochazka/Model/Privhistory.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Schedhistory:
     file: lib/App/Dochazka/Model/Schedhistory.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Schedintvls:
     file: lib/App/Dochazka/Model/Schedintvls.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Schedule:
     file: lib/App/Dochazka/Model/Schedule.pm
-    version: '0.153'
+    version: '0.155'
   App::Dochazka::Model::Shared:
     file: lib/App/Dochazka/Model/Shared.pm
-    version: '0.153'
+    version: '0.155'
 requires:
   Params::Validate: '1.06'
   perl: '5.012'
@@ -53,4 +53,4 @@ resources:
   homepage: https://sourceforge.net/projects/dochazka/
   license: http://opensource.org/licenses/BSD-3-Clause
   repository: https://sourceforge.net/p/dochazka/code/
-version: '0.153'
+version: '0.155'
