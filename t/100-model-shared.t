@@ -29,106 +29,44 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ************************************************************************* 
+#
+# unit tests for Shared.pm
+#
 
-package App::Dochazka::Model::Schedule;
+#!perl
 
 use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
+use Data::Dumper;
+use Test::Fatal;
+use Test::More;
+
 use App::Dochazka::Model::Shared;
 
-
-
-
-=head1 NAME
-
-App::Dochazka::Model::Schedule - schedule data model
-
-
-
-
-=head1 VERSION
-
-Version 0.153
-
-=cut
-
-our $VERSION = '0.153';
-
-
-
-
-=head1 SYNOPSIS
-
-Schedule data model.
-
-
-
-
-=head1 DESCRIPTION
-
-Schedule data model.
-
-
-
-
-=head1 METHODS
-
-=head2 spawn
-
-Constructor. See Employee.pm->spawn for general comments.
-
-=cut
-
 BEGIN {
     no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
+    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn;
+    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 'naivetest' );
+    *{"naivetest"} = App::Dochazka::Model::Shared::make_accessor( 'naivetest' );
 }
 
+# make_spawn
+like( exception{ __PACKAGE__->spawn( 1 ); }, qr/Odd number of parameters/ );
+like( exception{ __PACKAGE__->spawn( foo => 'bar' ); }, qr/not listed in the validation options: foo/ );
+my $object = __PACKAGE__->spawn( naivetest => 'Huh?' );
+is( ref $object, __PACKAGE__ );
+is( $object->naivetest, 'Huh?' );
 
+# make_reset
+$object->reset;
+ok( ! defined( $object->naivetest ) );
+$object->reset( naivetest => 'Bohuslav' );
+is( $object->naivetest, 'Bohuslav' );
 
-=head2 reset
+# make_accessor
+$object->naivetest( 'Fandango' );
+is( $object->naivetest, 'Fandango' );
 
-Boilerplate.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 'sid', 
-        'schedule', 'remark' );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 'sid', 'schedule', 'remark' ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-=head3 sid
-
-Accessor method.
-
-
-=head3 schedule
-
-Accessor method.
-
-
-=head3 remark
-
-Accessor method.
-
-=cut
-
-1;
+done_testing;

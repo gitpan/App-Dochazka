@@ -45,26 +45,26 @@ use warnings;
 
 =head1 NAME
 
-App::Dochazka - placeholder for Dochazka shared modules
+App::Dochazka Attendance and Time Tracking System - shared modules
 
 
 
 
 =head1 VERSION
 
-Version 0.147
+Version 0.153
 
 =cut
 
-our $VERSION = '0.147';
+our $VERSION = '0.153';
 
 
 
 
 =head1 DESCRIPTION
 
-This distro contains modules shared among L<App::Dochazka::REST> and
-L<App::Dochazka::CLI>.
+This distro contains modules that are used by both the server
+L<App::Dochazka::REST> and the command-line client L<App::Dochazka::CLI>.
 
 =cut
 

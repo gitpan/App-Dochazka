@@ -1,5 +1,29 @@
-Revision history for App-Dochazka-Model
+Revision history for App::Dochazka
 
-0.01    Date/time
-        First version, released on an unsuspecting world.
+0.147  2014-08-07 15:57 CEST
+- split off from App::Dochazka::REST into a separate distro
+
+0.148  2014-08-08 08:59 CEST
+- t/100-model-shared.t: add unit testing script for Model/Shared.pm
+- t/: add stub testing scripts for other modules in Model/
+- ../release: adapt scripts
+
+0.149  2014-08-08 10:11 CEST
+- test release script
+- t/: add some tests
+
+0.150  2014-08-08 10:58 CEST
+- Model/Shared.pm: make_accessor now takes an optional TYPE argument, 
+  which must be a type constant from Params::Validate; so the accessors
+  are no longer hardcoded to take only SCALAR values
+- t/: add some tests
+
+0.151  2014-08-08 11:03 CEST
+- Build.PL: fix requires and build_requires
+
+0.152  2014-08-08 11:35 CEST
+- Build.PL: add 'dist_abstract' line
+
+0.153  2014-08-08 11:40 CEST
+- testing release script
 

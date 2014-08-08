@@ -29,106 +29,20 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ************************************************************************* 
+#
+# unit tests for Model/Privhistory.pm
 
-package App::Dochazka::Model::Schedule;
-
+#!perl
 use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared;
+#use App::CELL::Test::LogToFile;
+use App::Dochazka::Model::Privhistory;
+use Test::Fatal;
+use Test::More;
 
+my $object = App::Dochazka::Model::Privhistory->spawn;
+is( ref $object, 'App::Dochazka::Model::Privhistory' );
 
-
-
-=head1 NAME
-
-App::Dochazka::Model::Schedule - schedule data model
-
-
-
-
-=head1 VERSION
-
-Version 0.153
-
-=cut
-
-our $VERSION = '0.153';
-
-
-
-
-=head1 SYNOPSIS
-
-Schedule data model.
-
-
-
-
-=head1 DESCRIPTION
-
-Schedule data model.
-
-
-
-
-=head1 METHODS
-
-=head2 spawn
-
-Constructor. See Employee.pm->spawn for general comments.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
-}
-
-
-
-=head2 reset
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 'sid', 
-        'schedule', 'remark' );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 'sid', 'schedule', 'remark' ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-=head3 sid
-
-Accessor method.
-
-
-=head3 schedule
-
-Accessor method.
-
-
-=head3 remark
-
-Accessor method.
-
-=cut
-
-1;
+done_testing;

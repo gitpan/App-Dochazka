@@ -1,10 +1,10 @@
 NAME
-    App::Dochazka - placeholder for Dochazka shared modules
+    App::Dochazka Attendance and Time Tracking System - shared modules
 
 VERSION
-    Version 0.147
+    Version 0.153
 
 DESCRIPTION
-    This distro contains modules shared among App::Dochazka::REST and
-    App::Dochazka::CLI.
+    This distro contains modules that are used by both the server
+    App::Dochazka::REST and the command-line client App::Dochazka::CLI.
 

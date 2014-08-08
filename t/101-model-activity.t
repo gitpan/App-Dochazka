@@ -29,106 +29,59 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ************************************************************************* 
+#
+# unit tests for Model/Activity.pm
+#
 
-package App::Dochazka::Model::Schedule;
-
+#!perl
 use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared;
+#use App::CELL::Test::LogToFile;
+use App::Dochazka::Model::Activity;
+use Test::Fatal;
+use Test::More;
 
+# spawn badness
+like( exception { App::Dochazka::Model::Activity->spawn( 'bogus' ); }, 
+    qr/Odd number of parameters/ );
+like( exception { App::Dochazka::Model::Activity->spawn( 'bogus' => 1 ); }, 
+    qr/not listed in the validation options: bogus/ );
 
+# spawn goodness
+my $obj = App::Dochazka::Model::Activity->spawn;
+is( ref $obj, 'App::Dochazka::Model::Activity' );
+$obj = App::Dochazka::Model::Activity->spawn(
+    aid => 112, 
+    code => 'BUBBA', 
+    long_desc => 'A wrestling referee', 
+    remark => 'cool dude' 
+);
+is( $obj->aid, 112 );
+is( $obj->code, 'BUBBA' );
+is( $obj->long_desc, 'A wrestling referee' );
+is( $obj->remark, 'cool dude' );
 
+# reset badness
+like( exception { $obj->reset( 'bogus' ); }, 
+    qr/Odd number of parameters/ );
+like( exception { $obj->reset( 'bogus' => 1 ); }, 
+    qr/not listed in the validation options: bogus/ );
 
-=head1 NAME
+# reset goodness
+$obj->reset(
+    aid => 55, 
+    code => 'Robert', 
+    long_desc => 'a refugee',
+    remark => 'smokes too much' 
+);
+is( ref $obj, 'App::Dochazka::Model::Activity' );
+is( $obj->aid, 55 ); 
+is( $obj->code, 'Robert' ); 
+is( $obj->long_desc, 'a refugee' );
+is( $obj->remark, 'smokes too much' );
 
-App::Dochazka::Model::Schedule - schedule data model
+# accessors already tested above
 
-
-
-
-=head1 VERSION
-
-Version 0.153
-
-=cut
-
-our $VERSION = '0.153';
-
-
-
-
-=head1 SYNOPSIS
-
-Schedule data model.
-
-
-
-
-=head1 DESCRIPTION
-
-Schedule data model.
-
-
-
-
-=head1 METHODS
-
-=head2 spawn
-
-Constructor. See Employee.pm->spawn for general comments.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
-}
-
-
-
-=head2 reset
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 'sid', 
-        'schedule', 'remark' );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 'sid', 'schedule', 'remark' ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-=head3 sid
-
-Accessor method.
-
-
-=head3 schedule
-
-Accessor method.
-
-
-=head3 remark
-
-Accessor method.
-
-=cut
-
-1;
+done_testing;

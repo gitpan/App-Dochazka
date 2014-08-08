@@ -50,18 +50,47 @@ the data model
 
 =head1 VERSION
 
-Version 0.147
+Version 0.153
 
 =cut
 
-our $VERSION = '0.147';
+our $VERSION = '0.153';
 
 
 
 
 =head1 SYNOPSIS
 
-Shared data model functions.
+Shared data model functions. All three functions are designed to be
+used together as follows:
+
+    package My::Package;
+
+    use Params::Validate qw( :all );
+
+    BEGIN {
+        no strict 'refs';
+        *{"spawn"} = App::Dochazka::Model::Shared::make_spawn;
+        *{"reset"} = App::Dochazka::Model::Shared::make_reset(
+            'attr1', 'attr2'
+        );
+        *{"attr1"} = App::Dochazka::Model::Shared::make_accessor( 'attr1' );
+        *{"attr2"} = App::Dochazka::Model::Shared::make_accessor( 'attr2', HASHREF );
+    }
+
+What this does: 
+
+=over
+
+=item * create a C<spawn> class method in your class
+
+=item * create a C<reset> instance method in your class
+
+=item * create a C<attr1> accessor method in your class (type defaults to SCALAR)
+
+=item * create a C<attr2> accessor method in your class (type HASHREF)
+
+=back
 
 
 
@@ -71,22 +100,18 @@ Shared data model functions.
 
 =head2 make_spawn
 
-Returns a ready-made 'spawn' method. 
+Returns a ready-made 'spawn' method for your class/package/module.
 
 =cut
 
 sub make_spawn {
-    return sub {
-        # process arguments
-        my ( $class, @ARGS ) = @_;
-        #die "Odd number of arguments (" . scalar @ARGS . ") in PARAMHASH: " . stringify_args( @ARGS ) if @ARGS and (@ARGS % 2);
-        my %ARGS = @ARGS;
 
-        # bless, reset, return
-        my $self = bless {}, $class;
-        $self->reset( %ARGS ); # make sure we have all required attributes
+    return sub {
+        my $self = bless {}, shift;
+        $self->reset( @_ );
         return $self;
     }
+
 }
 
 
@@ -134,10 +159,11 @@ Returns a ready-made accessor.
 =cut
 
 sub make_accessor {
-    my ( $subname ) = @_;
+    my ( $subname, $type ) = @_;
+    $type = $type || SCALAR;
     sub {
         my $self = shift;
-        validate_pos( @_, { type => SCALAR, optional => 1 } );
+        validate_pos( @_, { type => $type, optional => 1 } );
         $self->{$subname} = shift if @_;
         return $self->{$subname};
     };
