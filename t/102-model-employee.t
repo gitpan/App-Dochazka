@@ -64,7 +64,7 @@ is( $obj->email, 'handel@composers.org' );
 is( $obj->passhash, 'asdf' ); 
 is( $obj->salt, 'tastes good' ); 
 is( $obj->remark, 'too many notes' );
-is( $obj->priv, 'passerby' ); 
-is_deeply( $obj->schedule, {} );
+is( $obj->priv, 'highly privileged' ); 
+is( $obj->schedule, 44 );
 
 done_testing;

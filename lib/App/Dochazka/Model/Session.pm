@@ -30,20 +30,20 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ************************************************************************* 
 
-package App::Dochazka::Model::Schedintvls;
+package App::Dochazka::Model::Session;
 
 use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared; 
+use App::Dochazka::Model::Shared;
 
 
 
 
 =head1 NAME
 
-App::Dochazka::Model::Schedintvls - schedintvls data model
+App::Dochazka::Model::Session - session data model
 
 
 
@@ -61,7 +61,14 @@ our $VERSION = '0.157';
 
 =head1 SYNOPSIS
 
-Schedintvls data model.
+Session data model.
+
+
+
+
+=head1 DESCRIPTION
+
+Session data model.
 
 
 
@@ -83,15 +90,14 @@ BEGIN {
 
 =head2 reset
 
-Instance method. Resets object, either to its primal state (no arguments)
-or to the state given in PARAMHASH.
+Boilerplate.
 
 =cut
 
 BEGIN {
     no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 
-        'scratch_sid', 'intvls' 
+    *{"reset"} = App::Dochazka::Model::Shared::make_reset(
+        'session_id', 'eid', 'nick', 'nonce', 'ip_addr', 'last_seen'
     );
 }
 
@@ -104,24 +110,39 @@ Boilerplate.
 =cut
 
 BEGIN {
-    foreach my $subname ( 'scratch_sid', 'intvls', 'schedule' ) {
+    foreach my $subname ( 'session_id', 'eid', 'nick', 'nonce', 'ip_addr', 'last_seen' ) {
         no strict 'refs';
         *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
     }   
 }
 
 
-=head3 scratch_sid
+=head3 session_id
 
 Accessor method.
 
 
-=head3 intvls
+=head3 eid
 
 Accessor method.
 
 
-=head3 schedule
+=head3 nick
+
+Accessor method.
+
+
+=head3 nonce
+
+Accessor method.
+
+
+=head3 ip_addr
+
+Accessor method.
+
+
+=head3 last_seen
 
 Accessor method.
 

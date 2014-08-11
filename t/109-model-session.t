@@ -29,102 +29,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 # ************************************************************************* 
+#
+# unit tests for Model/Session.pm
+#
 
-package App::Dochazka::Model::Schedintvls;
-
+#!perl
 use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared; 
+#use App::CELL::Test::LogToFile;
+use App::Dochazka::Model::Session;
+use Test::Fatal;
+use Test::More;
 
+my $object = App::Dochazka::Model::Session->spawn;
+is( ref $object, 'App::Dochazka::Model::Session' );
 
-
-
-=head1 NAME
-
-App::Dochazka::Model::Schedintvls - schedintvls data model
-
-
-
-
-=head1 VERSION
-
-Version 0.157
-
-=cut
-
-our $VERSION = '0.157';
-
-
-
-
-=head1 SYNOPSIS
-
-Schedintvls data model.
-
-
-
-
-=head1 METHODS
-
-=head2 spawn
-
-Constructor. See Employee.pm->spawn for general comments.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
-}
-
-
-
-=head2 reset
-
-Instance method. Resets object, either to its primal state (no arguments)
-or to the state given in PARAMHASH.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 
-        'scratch_sid', 'intvls' 
-    );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 'scratch_sid', 'intvls', 'schedule' ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-
-=head3 scratch_sid
-
-Accessor method.
-
-
-=head3 intvls
-
-Accessor method.
-
-
-=head3 schedule
-
-Accessor method.
-
-=cut
-
-1;
+done_testing;

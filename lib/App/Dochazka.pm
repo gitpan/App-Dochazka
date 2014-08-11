@@ -52,11 +52,11 @@ App::Dochazka - Dochazka Attendance and Time Tracking System shared modules
 
 =head1 VERSION
 
-Version 0.155
+Version 0.157
 
 =cut
 
-our $VERSION = '0.155';
+our $VERSION = '0.157';
 
 
 

@@ -33,3 +33,10 @@ Revision history for App::Dochazka
 0.155  2014-08-08 12:14 CEST
 - add a sleep to release script to allow NFS to settle
 
+0.156  2014-08-10 18:40 CEST
+- Model/Employee.pm: add 'priv' and 'schedule' accessors
+- t/: update to current state
+
+0.157  2014-08-10 22:07 CEST
+- add Session class to the data model
+

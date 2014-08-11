@@ -10,6 +10,7 @@ lib/App/Dochazka/Model/Privhistory.pm
 lib/App/Dochazka/Model/Schedhistory.pm
 lib/App/Dochazka/Model/Schedintvls.pm
 lib/App/Dochazka/Model/Schedule.pm
+lib/App/Dochazka/Model/Session.pm
 lib/App/Dochazka/Model/Shared.pm
 Makefile.PL
 MANIFEST			This list of files
@@ -26,6 +27,7 @@ t/105-model-privhistory.t
 t/106-model-schedhistory.t
 t/107-model-schedintvls.t
 t/108-model-schedule.t
+t/109-model-session.t
 t/boilerplate.t
 t/manifest.t
 t/pod-coverage.t

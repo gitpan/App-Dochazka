@@ -50,11 +50,11 @@ App::Dochazka::Model::Employee - Employee data model
 
 =head1 VERSION
 
-Version 0.155
+Version 0.157
 
 =cut
 
-our $VERSION = '0.155';
+our $VERSION = '0.157';
 
 
 
@@ -115,7 +115,8 @@ Boilerplate.
 
 BEGIN {
     foreach my $subname ( 
-        'eid', 'fullname', 'nick', 'email', 'passhash', 'salt', 'remark' 
+        'eid', 'fullname', 'nick', 'email', 'passhash', 'salt', 'remark',
+        'priv', 'schedule'
     ) {
         no strict 'refs';
         *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
@@ -153,19 +154,12 @@ Accessor method.
 
 =head3 priv
 
-Accessor method. Meant to be overridden.
-
-=cut
-
-sub priv { 'passerby' };
-
+Accessor method.
 
 =head3 schedule
 
-Accessor method. Meant to be overriden.
+Accessor method.
 
 =cut
-
-sub schedule { {} };
 
 1;
