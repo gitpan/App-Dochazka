@@ -36,95 +36,11 @@ use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared; 
-
-
-
-
-=head1 NAME
-
-App::Dochazka::Model::Schedintvls - schedintvls data model
-
-
-
-
-=head1 VERSION
-
-Version 0.157
-
-=cut
-
-our $VERSION = '0.157';
-
-
-
-
-=head1 SYNOPSIS
-
-Schedintvls data model.
-
-
-
-
-=head1 METHODS
-
-=head2 spawn
-
-Constructor. See Employee.pm->spawn for general comments.
-
-=cut
+use constant ATTRS => qw( ssid intvls schedule );
 
 BEGIN {
-    no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
+    require App::Dochazka::Model::Shared;
+    eval App::Dochazka::Model::Shared::boilerplate( ATTRS );
 }
-
-
-
-=head2 reset
-
-Instance method. Resets object, either to its primal state (no arguments)
-or to the state given in PARAMHASH.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 
-        'scratch_sid', 'intvls' 
-    );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 'scratch_sid', 'intvls', 'schedule' ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-
-=head3 scratch_sid
-
-Accessor method.
-
-
-=head3 intvls
-
-Accessor method.
-
-
-=head3 schedule
-
-Accessor method.
-
-=cut
 
 1;

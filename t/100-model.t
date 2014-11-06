@@ -30,7 +30,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 # ************************************************************************* 
 #
-# unit tests for Shared.pm
+# unit tests for Model.pm
 #
 
 #!perl
@@ -43,13 +43,17 @@ use Data::Dumper;
 use Test::Fatal;
 use Test::More;
 
-use App::Dochazka::Model::Shared;
+use App::Dochazka::Model;
 
 BEGIN {
     no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn;
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 'naivetest' );
-    *{"naivetest"} = App::Dochazka::Model::Shared::make_accessor( 'naivetest' );
+    *{"spawn"} = App::Dochazka::Model::make_spawn;
+    *{"filter"} = App::Dochazka::Model::make_filter( 'naivetest' );
+    *{"reset"} = App::Dochazka::Model::make_reset( 'naivetest' );
+    *{"naivetest"} = App::Dochazka::Model::make_accessor( 'naivetest' );
+    *{"TO_JSON"} = App::Dochazka::Model::make_TO_JSON( 'naivetest' );
+    *{"compare"} = App::Dochazka::Model::make_compare( 'naivetest' );
+    *{"clone"} = App::Dochazka::Model::make_clone( 'naivetest' );
 }
 
 # make_spawn
@@ -58,6 +62,12 @@ like( exception{ __PACKAGE__->spawn( foo => 'bar' ); }, qr/not listed in the val
 my $object = __PACKAGE__->spawn( naivetest => 'Huh?' );
 is( ref $object, __PACKAGE__ );
 is( $object->naivetest, 'Huh?' );
+
+# make_filter
+# - filter routine takes a PROPLIST and returns a filtered PROPLIST
+my %fp = filter( bogusprop => 'totally bogus', naivetest => 'kosher' );
+is_deeply( \%fp, { naivetest => 'kosher' } );
+like( exception{ filter( 1 ); }, qr/Odd number of parameters/ );
 
 # make_reset
 $object->reset;
@@ -68,5 +78,22 @@ is( $object->naivetest, 'Bohuslav' );
 # make_accessor
 $object->naivetest( 'Fandango' );
 is( $object->naivetest, 'Fandango' );
+
+# make_TO_JSON
+$object = __PACKAGE__->spawn( naivetest => 'Huh?' );
+is_deeply( $object->TO_JSON, { naivetest => 'Huh?' } );
+
+# make_compare
+my $object1 = __PACKAGE__->spawn( naivetest => 'Huh?' );
+my $object2 = __PACKAGE__->spawn( naivetest => 'Huh?' );
+is_deeply( $object1, $object2 );
+ok( $object1->compare( $object2 ) );
+
+# make_clone
+my $object3 = $object1->clone;
+is_deeply( $object1, $object3 );
+is_deeply( $object2, $object3 );
+ok( $object1->compare( $object3 ) );
+ok( $object2->compare( $object3 ) );
 
 done_testing;

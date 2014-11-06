@@ -40,3 +40,88 @@ Revision history for App::Dochazka
 0.157  2014-08-10 22:07 CEST
 - add Session class to the data model
 
+0.158  2014-08-15 15:59 CEST
+- rename Model/Shared.pm to Shared.pm and refactor
+- bring in HTTP.pm from App-Dochazka-CLI (LWP and session code will be used 
+  by both ::CLI and ::WWW)
+
+0.159  2014-08-16 07:53 CEST
+- HTTP.pm: wholesale refactor
+
+0.160  2014-08-16 10:11 CEST
+- HTTP.pm: fix multiple bugs
+
+0.161  2014-08-21 12:42 CEST
+- MANIFEST: add missing HTTP.pm
+
+0.162  2014-08-24 20:22 CEST
+- minor cleanup
+
+0.163  2014-08-28 11:59 CEST
+- HTTP.pm->rest_req: encode/decode UTF-8 when encoding/decoding JSON
+
+0.164  2014-08-29 13:19 CEST
+- HTTP.pm: make 'rest_req' return hashref with the HTTP::Response object
+  from the REST server (stripped of the body), along with JSON body as
+  before
+
+0.165  2014-09-01 07:53 CEST
+- Unicode hell
+
+0.166  2014-09-01 16:41 CEST
+- Unicode hell
+
+0.167  2014-09-02 17:55 CEST
+- HTTP.pm: run 'encode_utf8' on the path before calling LWP::UserAgent with it
+
+0.168  2014-09-03 17:31 CEST
+- HTTP.pm: use Encode->encode_utf8 to encode the JSON string instead of 
+  JSON->new->utf8
+
+0.169  2014-09-10 16:25 CEST
+- delete HTTP.pm after moving it to App-MFILE distro
+
+0.170  2014-10-20 16:04 CEST
+- Model/Employee.pm: remove 'priv' and 'schedule' properties
+- t/: adapt tests
+
+0.171  2014-10-29 10:15 CET
+- Model/Activity.pm: add 'disabled' field to activity object
+
+0.172  2014-10-29 10:19 CET
+- do a better job of adding the 'disabled' field to activity objects
+
+0.173  2014-10-30 11:08 CET
+- Model.pm: add 'make_filter' subroutine generator
+- Model/: in all model modules, generate 'filter' routine using make_filter
+- t/: add two test cases for make_filter
+
+0.174  2014-10-30 12:32 CET
+- Model/: correct omissions from last commit
+
+0.175  2014-11-04 13:33 CET
+- rename 'scratch_sid' (part of Schedintvls object) to 'ssid'
+
+0.176  2014-11-05 09:42 CET
+- Model/Schedule.pm: add 'disabled' property to Schedule object
+
+0.177  2014-11-05 17:08 CET
+- Model.pm: add make_TO_JSON generator
+- Model/: modify all model modules so the list of attributes (object
+  properties) appears only once per module (use constant ATTRS);
+  generate TO_JSON methods for all models/classes
+- get rid of Session.pm (deprecated)
+
+0.178  2014-11-06 14:18 CET
+- Model.pm: add new method generators 'make_compare' and 'make_clone'
+
+0.179  2014-11-06 14:27 CET
+- t/: remove last mention of Session.pm
+
+0.180  2014-11-06 14:43 CET
+- refactor 'make_compare' to use Test::Deep::NoTest for the comparison
+
+0.181  2014-11-06 16:33 CET
+- Model/Shared.pm: write new boilerplate code
+- Model/: apply new boilerplate code in all the model modules
+

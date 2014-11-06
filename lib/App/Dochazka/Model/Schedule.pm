@@ -36,99 +36,11 @@ use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared;
-
-
-
-
-=head1 NAME
-
-App::Dochazka::Model::Schedule - schedule data model
-
-
-
-
-=head1 VERSION
-
-Version 0.157
-
-=cut
-
-our $VERSION = '0.157';
-
-
-
-
-=head1 SYNOPSIS
-
-Schedule data model.
-
-
-
-
-=head1 DESCRIPTION
-
-Schedule data model.
-
-
-
-
-=head1 METHODS
-
-=head2 spawn
-
-Constructor. See Employee.pm->spawn for general comments.
-
-=cut
+use constant ATTRS => qw( sid schedule remark disabled );
 
 BEGIN {
-    no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
+    require App::Dochazka::Model::Shared;
+    eval App::Dochazka::Model::Shared::boilerplate( ATTRS );
 }
-
-
-
-=head2 reset
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 'sid', 
-        'schedule', 'remark' );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 'sid', 'schedule', 'remark' ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-=head3 sid
-
-Accessor method.
-
-
-=head3 schedule
-
-Accessor method.
-
-
-=head3 remark
-
-Accessor method.
-
-=cut
 
 1;

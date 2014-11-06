@@ -1,0 +1,273 @@
+# ************************************************************************* 
+# Copyright (c) 2014, SUSE LLC
+# 
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+# 
+# 1. Redistributions of source code must retain the above copyright notice,
+# this list of conditions and the following disclaimer.
+# 
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+# 
+# 3. Neither the name of SUSE LLC nor the names of its contributors may be
+# used to endorse or promote products derived from this software without
+# specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
+# ************************************************************************* 
+
+package App::Dochazka::Model;
+
+use 5.012;
+use strict;
+use warnings FATAL => 'all';
+
+use Params::Validate qw( :all );
+use Test::Deep::NoTest;
+
+
+
+=head1 NAME
+
+App::Dochazka::Model - functions shared by several modules within
+the data model
+
+
+
+
+=head1 VERSION
+
+Version 0.181
+
+=cut
+
+our $VERSION = '0.181';
+
+
+
+
+=head1 SYNOPSIS
+
+Shared data model functions. All three functions are designed to be
+used together as follows:
+
+    package My::Package;
+
+    use Params::Validate qw( :all );
+
+    BEGIN {
+        no strict 'refs';
+        *{"spawn"} = App::Dochazka::Model::make_spawn;
+        *{"reset"} = App::Dochazka::Model::make_reset(
+            'attr1', 'attr2',
+        );
+        *{"attr1"} = App::Dochazka::Model::make_accessor( 'attr1' );
+        *{"attr2"} = App::Dochazka::Model::make_accessor( 'attr2', HASHREF );
+    }
+
+What this does: 
+
+=over
+
+=item * create a C<spawn> class method in your class
+
+=item * create a C<reset> instance method in your class
+
+=item * create a C<attr1> accessor method in your class (type defaults to SCALAR)
+
+=item * create a C<attr2> accessor method in your class (type HASHREF)
+
+=back
+
+
+
+
+=head1 FUNCTIONS
+
+
+=head2 make_spawn
+
+Returns a ready-made 'spawn' method for your class/package/module.
+
+=cut
+
+sub make_spawn {
+
+    return sub {
+        my $self = bless {}, shift;
+        $self->reset( @_ );
+        return $self;
+    }
+
+}
+
+
+=head2 make_filter
+
+Given a list of attributes, returns a ready-made 'filter' routine
+which takes a PROPLIST and returns a new PROPLIST from which all bogus
+properties have been removed.
+
+=cut
+
+sub make_filter {
+
+    # take a list consisting of the names of attributes that the 'filter'
+    # routine will retain -- these must all be scalars
+    my ( @attr ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    return sub {
+        if ( @_ % 2 ) {
+            die "Odd number of parameters given to filter routine!";
+        }
+        my %ARGS = @_;
+        my %PROPLIST;
+        map { $PROPLIST{$_} = $ARGS{$_}; } @attr;
+        return %PROPLIST;
+    }
+}
+
+
+=head2 make_reset
+
+Given a list of attributes, returns a ready-made 'reset' method. 
+
+=cut
+
+sub make_reset {
+
+    # take a list consisting of the names of attributes that the 'reset'
+    # method will accept -- these must all be scalars
+    my ( @attr ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    # construct the validation specification for the 'reset' routine:
+    # 1. 'reset' will take named parameters _only_
+    # 2. only the values from @attr will be accepted as parameters
+    # 3. all parameters are optional (indicated by 0 value in $val_spec)
+    my $val_spec;
+    map { $val_spec->{$_} = 0; } @attr;
+    
+    return sub {
+        # process arguments
+        my $self = shift;
+        #confess "Not an instance method call" unless ref $self;
+        my %ARGS = validate( @_, $val_spec ) if @_ and defined $_[0];
+
+        # Set attributes to run-time values sent in argument list.
+	# Attributes that are not in the argument list will get set to undef.
+        map { $self->{$_} = $ARGS{$_}; } @attr;
+
+        # run the populate function, if any
+        $self->populate() if $self->can( 'populate' );
+
+        # return an appropriate throw-away value
+        return;
+    }
+}
+
+
+=head2 make_accessor
+
+Returns a ready-made accessor.
+
+=cut
+
+sub make_accessor {
+    my ( $subname, $type ) = @_;
+    $type = $type || SCALAR;
+    sub {
+        my $self = shift;
+        validate_pos( @_, { type => $type, optional => 1 } );
+        $self->{$subname} = shift if @_;
+        return $self->{$subname};
+    };
+}
+
+
+=head2 make_TO_JSON
+
+Returns a ready-made TO_JSON
+
+=cut
+
+sub make_TO_JSON {
+
+    my ( @attr ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    return sub {
+        my $self = shift;
+        my $unblessed_copy;
+
+        map { $unblessed_copy->{$_} = $self->{$_}; } @attr;
+
+        return $unblessed_copy;
+    }
+}
+
+
+=head2 make_compare
+
+Returns a ready-made 'compare' method that can be used to determine if two objects are the same.
+
+=cut
+
+sub make_compare {
+
+    my ( @attr ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    return sub {
+        my ( $self, $other ) = validate_pos( @_, 1, 1 );
+        return if ref( $other ) ne ref( $self );
+        
+        return eq_deeply( $self, $other );
+    }
+}
+
+
+=head2 make_clone
+
+Returns a ready-made 'clone' method.
+
+=cut
+
+sub make_clone {
+
+    my ( @attr ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    return sub {
+        my ( $self ) = @_;
+
+        my ( %h, $clone );
+        map { $h{$_} = $self->{$_}; } @attr;
+        {
+            no strict 'refs';
+            $clone = ( ref $self )->spawn( %h );
+        }
+
+        return $clone;
+    }
+}
+
+
+=head1 AUTHOR
+
+Nathan Cutler, C<< <presnypreklad@gmail.com> >>
+
+=cut 
+
+1;
+

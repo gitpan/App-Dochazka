@@ -36,114 +36,11 @@ use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared;
-
-
-
-=head1 NAME
-
-App::Dochazka::Model::Interval - activity intervals data model
-
-
-
-
-=head1 VERSION
-
-Version 0.157
-
-=cut
-
-our $VERSION = '0.157';
-
-
-
-
-=head1 SYNOPSIS
-
-Activity intervals data model.
-
-
-
-
-=head1 DESCRIPTION
-
-Activity intervals data model.
-
-
-
-
-=head1 METHODS
-
-=head2 spawn
-
-Constructor. See Employee.pm->spawn for general comments.
-
-=cut
+use constant ATTRS => qw( iid eid aid intvl long_desc remark );
 
 BEGIN {
-    no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
+    require App::Dochazka::Model::Shared;
+    eval App::Dochazka::Model::Shared::boilerplate( ATTRS );
 }
-
-
-
-=head2 reset
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset(
-        'iid', 'eid', 'aid', 'intvl', 'long_desc', 'remark'
-    );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 'iid', 'eid', 'aid', 'intvl', 'long_desc', 'remark' ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-=head3 iid
-
-Accessor method.
-
-
-=head3 eid
-
-Accessor method.
-
-
-=head3 aid
-
-Accessor method.
-
-
-=head3 intvl
-
-Accessor method.
-
-
-=head3 long_desc
-
-Accessor method.
-
-
-=head3 remark
-
-Accessor method.
-
-=cut
 
 1;

@@ -52,9 +52,7 @@ $obj = App::Dochazka::Model::Employee->spawn(
     'email' => 'handel@composers.org', 
     'passhash' => 'asdf', 
     'salt' => 'tastes good', 
-    'remark' => 'too many notes',
-    'priv' => 'highly privileged', 
-    'schedule' => 44
+    'remark' => 'too many notes'
 );
 is( ref $obj, 'App::Dochazka::Model::Employee' );
 is( $obj->eid, 234 );
@@ -64,7 +62,5 @@ is( $obj->email, 'handel@composers.org' );
 is( $obj->passhash, 'asdf' ); 
 is( $obj->salt, 'tastes good' ); 
 is( $obj->remark, 'too many notes' );
-is( $obj->priv, 'highly privileged' ); 
-is( $obj->schedule, 44 );
 
 done_testing;

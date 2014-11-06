@@ -36,99 +36,11 @@ use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use App::Dochazka::Model::Shared;
-
-
-
-=head1 NAME
-
-App::Dochazka::Model::Activity - activity data model
-
-
-
-
-=head1 VERSION
-
-Version 0.157
-
-=cut
-
-our $VERSION = '0.157';
-
-
-
-
-=head1 SYNOPSIS
-
-    use App::Dochazka::Model::Activity;
-
-    ...
-
-
-
-=head1 METHODS
-
-
-=head2 spawn
-
-Activity constructor. For details, see Employee.pm->spawn.
-
-=cut
+use constant ATTRS => qw( aid code long_desc remark disabled );
 
 BEGIN {
-    no strict 'refs';
-    *{"spawn"} = App::Dochazka::Model::Shared::make_spawn();
+    require App::Dochazka::Model::Shared;
+    eval App::Dochazka::Model::Shared::boilerplate( ATTRS );
 }
-
-
-
-=head2 reset
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    no strict 'refs';
-    *{"reset"} = App::Dochazka::Model::Shared::make_reset( 
-        'aid', 'code', 'long_desc', 'remark',
-    );
-}
-
-
-
-=head2 Accessor methods
-
-Boilerplate.
-
-=cut
-
-BEGIN {
-    foreach my $subname ( 
-        'aid', 'code', 'long_desc', 'remark',
-    ) {
-        no strict 'refs';
-        *{"$subname"} = App::Dochazka::Model::Shared::make_accessor( $subname );
-    }   
-}
-
-
-=head3 aid
-
-Accessor method.
-
-=head3 code
-
-Accessor method.
-
-=head3 long_desc
-
-Accessor method.
-
-=head3 remark
-
-Accessor method.
-
-=cut
 
 1;

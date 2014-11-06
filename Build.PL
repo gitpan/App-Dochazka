@@ -19,10 +19,12 @@ my $build = Module::Build->new(
     build_requires     => { 
         'Test::Fatal'        => 0,
         'Params::Validate'   => 1.06,
+        'Test::Deep::NoTest' => 0,
     },
     requires           => {
         'perl'               => 5.012,
         'Params::Validate'   => 1.06,
+        'Test::Deep::NoTest' => 0,
     },
     meta_merge => {
         resources => {

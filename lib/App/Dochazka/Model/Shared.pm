@@ -36,147 +36,97 @@ use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
-use Params::Validate qw( :all );
-
 
 
 =head1 NAME
 
-App::Dochazka::Model::Shared - functions shared by several modules within
-the data model
+App::Dochazka::Model::Shared - generate boilerplate code
 
 
 
 
 =head1 VERSION
 
-Version 0.157
+Version 0.181
 
 =cut
 
-our $VERSION = '0.157';
-
+our $VERSION = '0.181';
 
 
 
 =head1 SYNOPSIS
 
-Shared data model functions. All three functions are designed to be
-used together as follows:
+    use App::Dochazka::Model::Shared;
 
-    package My::Package;
-
-    use Params::Validate qw( :all );
-
-    BEGIN {
-        no strict 'refs';
-        *{"spawn"} = App::Dochazka::Model::Shared::make_spawn;
-        *{"reset"} = App::Dochazka::Model::Shared::make_reset(
-            'attr1', 'attr2'
-        );
-        *{"attr1"} = App::Dochazka::Model::Shared::make_accessor( 'attr1' );
-        *{"attr2"} = App::Dochazka::Model::Shared::make_accessor( 'attr2', HASHREF );
-    }
-
-What this does: 
-
-=over
-
-=item * create a C<spawn> class method in your class
-
-=item * create a C<reset> instance method in your class
-
-=item * create a C<attr1> accessor method in your class (type defaults to SCALAR)
-
-=item * create a C<attr2> accessor method in your class (type HASHREF)
-
-=back
-
-
-
-
-=head1 FUNCTIONS
-
-
-=head2 make_spawn
-
-Returns a ready-made 'spawn' method for your class/package/module.
+    ...
 
 =cut
 
-sub make_spawn {
+# This routine requires some explanation. It takes a list of attributes
+# (object property names), and returns a string that can be run through
+# 'eval' to generate 'spawn', 'filter', 'reset', 'TO_JSON', 'compare',
+# and 'clone' methods for a given class, as well as basic accessors for
+# that class. Since this same code needs to be re-used for each class,
+# I decided to have it in just one place at the expense of readability.
+# 
+# the EOH heredoc also deserves line-by-line commentary:
+#
+# no strict 'refs' is required for the *{"spawn"}, etc. constructs 
+#
+# require App::Dochazka::Model is required because we refer to it
+# when executing the make_spawn, make_filter, etc. routines
+#
+# my %make = ( . . . sets up a dispatch table -- for a good explanation
+# see http://stackoverflow.com/questions/1915616/how-can-i-elegantly-call-a-perl-subroutine-whose-name-is-held-in-a-variable
+#
+# *{"spawn"} = $make{"spawn"}->(); runs the make_spawn routine to 
+# create the 'spawn' method
+# 
+# map { *{$_} = $make{$_}->( ATTRS ); } qw( filter reset TO_JSON compare clone );
+# runs the make_filter, make_reset, etc. routines, with the
+# contents of the ATTRS constant as the argument
+#
+# map { *{$_} = $make{"accessor"}->( $_ ); } ATTRS;
+# runs the make_accessor routine once for each element of the ATTRS list
+# (this generates the basic accessors)
+#
+# After the heredoc a qw( ... ) string is constructed from the 
+# @attrs array and this string is substituted for all occurrences
+# of the string ATTRS in the heredoc
+#
+# finally, the modified heredoc is returned to the caller
+sub boilerplate {
+    my @attrs = @_;
 
-    return sub {
-        my $self = bless {}, shift;
-        $self->reset( @_ );
-        return $self;
-    }
+    my $bpc = <<'EOH';
+    no strict 'refs';
+    require App::Dochazka::Model;
+    my %make = (
+        spawn => \&App::Dochazka::Model::make_spawn,
+        filter => \&App::Dochazka::Model::make_filter,
+        reset => \&App::Dochazka::Model::make_reset,
+        TO_JSON => \&App::Dochazka::Model::make_TO_JSON,
+        compare => \&App::Dochazka::Model::make_compare,
+        clone => \&App::Dochazka::Model::make_clone,
+        accessor => \&App::Dochazka::Model::make_accessor,
+    );
+    *{"spawn"} = $make{"spawn"}->();
+    map {
+        *{$_} = $make{$_}->( ATTRS );
+    } qw( filter reset TO_JSON compare clone );
+    map {
+        *{$_} = $make{"accessor"}->( $_ );
+    } ATTRS;
+EOH
 
+    my $attr_str = "qw( ";
+    map { $attr_str .= $_; $attr_str .= ' '; } @attrs;
+    $attr_str .= ')';
+
+    $bpc =~ s/ATTRS/$attr_str/gs;
+
+    return $bpc;
 }
-
-
-=head2 make_reset
-
-Given a list of attributes, returns a ready-made 'reset' method. 
-
-=cut
-
-sub make_reset {
-
-    # take a list consisting of the names of attributes that the 'reset'
-    # method will accept -- these must all be scalars
-    my ( @attr ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
-
-    # construct the validation specification for the 'reset' routine:
-    # 1. 'reset' will take named parameters _only_
-    # 2. only the values from @attr will be accepted as parameters
-    # 3. all parameters are optional
-    my $val_spec;
-    map { $val_spec->{$_} = 0; } @attr;
-    
-    return sub {
-        # process arguments
-        my $self = shift;
-        #confess "Not an instance method call" unless ref $self;
-        my %ARGS = validate( @_, $val_spec ) if @_ and defined $_[0];
-
-        # set attributes to run-time values sent in argument list
-        map { $self->{$_} = $ARGS{$_}; } @attr;
-
-        # run the populate function, if any
-        $self->populate() if $self->can( 'populate' );
-
-        # return an appropriate throw-away value
-        return;
-    }
-}
-
-
-=head2 make_accessor
-
-Returns a ready-made accessor.
-
-=cut
-
-sub make_accessor {
-    my ( $subname, $type ) = @_;
-    $type = $type || SCALAR;
-    sub {
-        my $self = shift;
-        validate_pos( @_, { type => $type, optional => 1 } );
-        $self->{$subname} = shift if @_;
-        return $self->{$subname};
-    };
-}
-
-
-
-
-=head1 AUTHOR
-
-Nathan Cutler, C<< <presnypreklad@gmail.com> >>
-
-=cut 
 
 1;
-
