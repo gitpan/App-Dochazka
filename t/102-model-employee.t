@@ -42,7 +42,13 @@ use App::Dochazka::Model::Employee;
 use Test::Fatal;
 use Test::More;
 
-# spawn
+# spawn badness
+like( exception { App::Dochazka::Model::Employee->spawn( 'bogus' ); }, 
+    qr/Odd number of parameters/ );
+like( exception { App::Dochazka::Model::Employee->spawn( 'bogus' => 1 ); }, 
+    qr/not listed in the validation options: bogus/ );
+
+# spawn goodness
 my $obj = App::Dochazka::Model::Employee->spawn;
 is( ref $obj, 'App::Dochazka::Model::Employee' );
 $obj = App::Dochazka::Model::Employee->spawn(
@@ -62,5 +68,25 @@ is( $obj->email, 'handel@composers.org' );
 is( $obj->passhash, 'asdf' ); 
 is( $obj->salt, 'tastes good' ); 
 is( $obj->remark, 'too many notes' );
+
+# reset badness
+like( exception { $obj->reset( 'bogus' ); }, 
+    qr/Odd number of parameters/ );
+like( exception { $obj->reset( 'bogus' => 1 ); }, 
+    qr/not listed in the validation options: bogus/ );
+
+# reset goodness
+my %props = (
+    'eid' => 99,
+    'fullname' => "Luft Balons",
+    'nick' => "Needle", 
+    'email' => 'needle@composers.org', 
+    'passhash' => '', 
+    'salt' => undef,
+    'remark' => 'go away'
+);
+$obj->reset( %props );
+my $obj2 = App::Dochazka::Model::Employee->spawn( %props );
+is_deeply( $obj, $obj2 );
 
 done_testing;

@@ -36,11 +36,13 @@ use 5.012;
 use strict;
 use warnings FATAL => 'all';
 
+use App::Dochazka::Model;
 use constant ATTRS => qw( lid eid intvl remark );
 
+our $VERSION = '0.182';
+
 BEGIN {
-    require App::Dochazka::Model::Shared;
-    eval App::Dochazka::Model::Shared::boilerplate( ATTRS );
+    App::Dochazka::Model::boilerplate( __PACKAGE__, ATTRS );
 }
 
 1;

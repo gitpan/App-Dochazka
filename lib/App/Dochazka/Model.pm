@@ -51,11 +51,11 @@ the data model
 
 =head1 VERSION
 
-Version 0.181
+Version 0.182
 
 =cut
 
-our $VERSION = '0.181';
+our $VERSION = '0.182';
 
 
 
@@ -94,9 +94,94 @@ What this does:
 =back
 
 
+=head1 PACKAGE VARIABLES
+
+Dispatch table used in 'boilerplate'.
+
+=cut
+
+my %make = (
+    spawn => \&make_spawn,
+    filter => \&make_filter,
+    reset => \&make_reset,
+    TO_JSON => \&make_TO_JSON,
+    compare => \&make_compare,
+    compare_disabled => \&make_compare_disabled,
+    clone => \&make_clone,
+    accessor => \&make_accessor,
+);
 
 
 =head1 FUNCTIONS
+
+
+=head2 boilerplate
+
+Run all the necessary commands to "install" the methods inside your
+module. Call like this:
+
+    use App::Dochazka::Model;
+    use constant ATTRS => qw( ... );
+
+    BEGIN {
+        App::Dochazka::Model::boilerplate( __PACKAGE__, ATTRS );
+    }
+
+where the constant ATTRS contains the list of object properties.
+
+This routine requires some explanation. It's purpose is to generate
+"boilerplate" code for the modules under C<App::Dochazka::Model>.
+That includes the following methods:
+
+=over 
+
+=item * C<spawn> 
+
+=item * C<filter> 
+
+=item * C<reset> 
+
+=item * C<TO_JSON> 
+
+=item * C<compare>
+
+=item * C<compare_disabled>
+
+=item * C<clone>
+
+=back
+
+as well as basic accessors for that model/class. 
+
+The C<boilerplate> routine takes a module name and a list of attributes (object
+property names), and returns nothing. 
+
+=cut
+
+sub boilerplate {
+    no strict 'refs';
+    my ( $module, @attrs ) = @_;
+    my $fn;
+
+    # generate 'spawn' method
+    $fn = $module . "::spawn";
+    *{ $fn } = $make{"spawn"}->();
+
+    # generate filter, reset, TO_JSON, compare, compare_disabled, and clone
+    map {
+        $fn = $module . '::' . $_;
+        *{ $fn } = $make{$_}->( @attrs );
+    } qw( filter reset TO_JSON compare compare_disabled clone );
+
+    # generate accessors (one for each property)
+    map {
+        $fn = $module . '::' . $_;
+        *{ $fn } = $make{"accessor"}->( $_ );
+    } @attrs;
+
+    return;
+}
+
 
 
 =head2 make_spawn
@@ -234,6 +319,33 @@ sub make_compare {
         return if ref( $other ) ne ref( $self );
         
         return eq_deeply( $self, $other );
+    }
+}
+
+
+=head2 make_compare_disabled
+
+Returns a ready-made 'compare' method that can be used to determine if two objects are the same.
+For use with objects containing a 'disabled' property where 'undef' and 'false' are treatd
+as functionally the same.
+
+=cut
+
+sub make_compare_disabled {
+
+    my ( @attr ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    return sub {
+        my ( $self, $other ) = validate_pos( @_, 1, 1 );
+        return $self->compare( $other) unless grep { $_ eq 'disabled' } @attr;
+        return if ref( $other ) ne ref( $self );
+        my $self_disabled = $self->{'disabled'};
+        delete $self->{'disabled'};
+        my $other_disabled = $other->{'disabled'};
+        delete $other->{'disabled'};
+        return 0 unless eq_deeply( $self, $other );
+        return 0 unless ( ! $self_disabled and ! $other_disabled ) or ( $self_disabled and $other_disabled );
+        return 1;
     }
 }
 

@@ -125,3 +125,10 @@ Revision history for App::Dochazka
 - Model/Shared.pm: write new boilerplate code
 - Model/: apply new boilerplate code in all the model modules
 
+0.182  2014-11-07 11:16 CET
+- after giving the matter some thought, eliminate Model/Shared.pm with its 'eval' kludge
+- Model.pm: implement a proper 'boilerplate' function; add a 'make_compare_disabled'
+  method generator
+- Model/: adapt all model modules
+- t/: add some tests
+

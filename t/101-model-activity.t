@@ -70,18 +70,52 @@ like( exception { $obj->reset( 'bogus' => 1 ); },
     qr/not listed in the validation options: bogus/ );
 
 # reset goodness
-$obj->reset(
+my %props = (
     aid => 55, 
     code => 'Robert', 
     long_desc => 'a refugee',
-    remark => 'smokes too much' 
+    remark => 'smokes too much',
+    disabled => undef,
 );
+$obj->reset( %props );
+my $obj2 = App::Dochazka::Model::Activity->spawn( %props );
 is( ref $obj, 'App::Dochazka::Model::Activity' );
-is( $obj->aid, 55 ); 
-is( $obj->code, 'Robert' ); 
-is( $obj->long_desc, 'a refugee' );
-is( $obj->remark, 'smokes too much' );
+is( ref $obj2, 'App::Dochazka::Model::Activity' );
+is_deeply( $obj, $obj2 );
+map { is( $obj->{$_}, $props{$_} ); } keys( %props );
+is( $obj->aid, $obj->{'aid'} );
+is( $obj->code, $obj->{'code'} ); 
+is( $obj->long_desc, $obj->{'long_desc'} );
+is( $obj->remark, $obj->{'remark'} );
+is( $obj->disabled, $obj->{'disabled'} );
+ok( ! $obj->disabled );
+is( $obj->disabled, undef );
+
+# TO_JSON
+my $u_obj = $obj->TO_JSON;
+is( ref $u_obj, 'HASH' );
+is_deeply( $u_obj, {
+    'aid' => 55,
+    'code' => 'Robert', 
+    'long_desc' => 'a refugee',
+    'remark' => 'smokes too much',
+    'disabled' => undef,
+});
+
+# clone, compare, compare_disabled
+$obj2 = $obj->clone;
+isnt( $obj, $obj2 );
+is_deeply( $obj, $obj2 );
+ok( $obj->compare( $obj2 ) );
+ok( $obj->compare_disabled( $obj2 ) );
+is( $obj->disabled, undef );
+$obj->disabled( 0 );
+is( $obj->disabled, 0 );
+is( $obj2->disabled, undef );
+ok( ! $obj->compare( $obj2 ) );
+ok( $obj->compare_disabled( $obj2 ) );
 
 # accessors already tested above
 
 done_testing;
+
