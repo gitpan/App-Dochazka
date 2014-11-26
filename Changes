@@ -132,3 +132,6 @@ Revision history for App::Dochazka
 - Model/: adapt all model modules
 - t/: add some tests
 
+0.183  2014-11-26 09:09 CET
+- Model.pm: make accessors accept UNDEF as well as SCALAR
+

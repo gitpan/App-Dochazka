@@ -51,11 +51,11 @@ the data model
 
 =head1 VERSION
 
-Version 0.182
+Version 0.183
 
 =cut
 
-our $VERSION = '0.182';
+our $VERSION = '0.183';
 
 
 
@@ -273,7 +273,7 @@ Returns a ready-made accessor.
 
 sub make_accessor {
     my ( $subname, $type ) = @_;
-    $type = $type || SCALAR;
+    $type = $type || ( SCALAR | UNDEF );
     sub {
         my $self = shift;
         validate_pos( @_, { type => $type, optional => 1 } );

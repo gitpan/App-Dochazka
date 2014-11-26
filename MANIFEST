@@ -4,7 +4,6 @@ ignore.txt
 lib/App/Dochazka.pm
 lib/App/Dochazka/Model.pm
 lib/App/Dochazka/Model/Activity.pm
-lib/App/Dochazka/Model/bu
 lib/App/Dochazka/Model/Employee.pm
 lib/App/Dochazka/Model/Interval.pm
 lib/App/Dochazka/Model/Lock.pm
