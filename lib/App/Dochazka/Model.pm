@@ -51,11 +51,11 @@ the data model
 
 =head1 VERSION
 
-Version 0.183
+Version 0.184
 
 =cut
 
-our $VERSION = '0.183';
+our $VERSION = '0.184';
 
 
 
@@ -109,6 +109,8 @@ my %make = (
     compare_disabled => \&make_compare_disabled,
     clone => \&make_clone,
     accessor => \&make_accessor,
+    attrs => \&make_attrs,
+    get => \&make_get,
 );
 
 
@@ -149,6 +151,10 @@ That includes the following methods:
 
 =item * C<clone>
 
+=item * C<attrs>
+
+=item * C<get>
+
 =back
 
 as well as basic accessors for that model/class. 
@@ -167,11 +173,11 @@ sub boilerplate {
     $fn = $module . "::spawn";
     *{ $fn } = $make{"spawn"}->();
 
-    # generate filter, reset, TO_JSON, compare, compare_disabled, and clone
+    # generate filter, reset, TO_JSON, compare, compare_disabled, clone, attrs, and get
     map {
         $fn = $module . '::' . $_;
         *{ $fn } = $make{$_}->( @attrs );
-    } qw( filter reset TO_JSON compare compare_disabled clone );
+    } qw( filter reset TO_JSON compare compare_disabled clone attrs get );
 
     # generate accessors (one for each property)
     map {
@@ -374,6 +380,45 @@ sub make_clone {
     }
 }
 
+
+=head2 make_attrs
+
+Returns a ready-made 'attrs' method.
+
+=cut
+
+sub make_attrs {
+
+    my ( @attrs ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    return sub {
+        my ( $self ) = @_;
+
+        return \@attrs;
+    }
+}
+
+
+=head2 make_get
+
+Returns a ready-made 'get' method.
+
+=cut
+
+sub make_get {
+
+    my ( @attrs ) = validate_pos( @_, map { { type => SCALAR }; } @_ );
+
+    return sub {
+        my ( $self, $attr ) = @_;
+
+        if ( grep { $_ eq $attr } @attrs ) {
+            return $self->{$attr};
+        }
+        # unknown attribute
+        return;
+    }
+}
 
 =head1 AUTHOR
 

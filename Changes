@@ -135,3 +135,6 @@ Revision history for App::Dochazka
 0.183  2014-11-26 09:09 CET
 - Model.pm: make accessors accept UNDEF as well as SCALAR
 
+0.184  2014-11-26 14:01 CET
+- Model.pm: add 'attrs' and 'get' methods to all model classes
+

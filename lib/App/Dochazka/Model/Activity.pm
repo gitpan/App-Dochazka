@@ -39,7 +39,7 @@ use warnings FATAL => 'all';
 use App::Dochazka::Model;
 use constant ATTRS => qw( aid code long_desc remark disabled );
 
-our $VERSION = '0.183';
+our $VERSION = '0.184';
 
 BEGIN {
     App::Dochazka::Model::boilerplate( __PACKAGE__, ATTRS );
