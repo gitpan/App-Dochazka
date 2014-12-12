@@ -138,3 +138,7 @@ Revision history for App::Dochazka
 0.184  2014-11-26 14:01 CET
 - Model.pm: add 'attrs' and 'get' methods to all model classes
 
+0.185  2014-12-03 08:23 CET
+- Model/Employee.pm: add a 'sec_id' property
+- t/: adapt to the new property
+

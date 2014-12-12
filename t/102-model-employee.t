@@ -53,6 +53,7 @@ my $obj = App::Dochazka::Model::Employee->spawn;
 is( ref $obj, 'App::Dochazka::Model::Employee' );
 $obj = App::Dochazka::Model::Employee->spawn(
     'eid' => 234,
+    'sec_id' => 96609,
     'fullname' => "Friedrich Handel",
     'nick' => "Freedie", 
     'email' => 'handel@composers.org', 
@@ -62,6 +63,7 @@ $obj = App::Dochazka::Model::Employee->spawn(
 );
 is( ref $obj, 'App::Dochazka::Model::Employee' );
 is( $obj->eid, 234 );
+is( $obj->sec_id, 96609 );
 is( $obj->fullname, "Friedrich Handel" );
 is( $obj->nick, "Freedie" ); 
 is( $obj->email, 'handel@composers.org' ); 
@@ -78,6 +80,7 @@ like( exception { $obj->reset( 'bogus' => 1 ); },
 # reset goodness
 my %props = (
     'eid' => 99,
+    'sec_id' => 15334,
     'fullname' => "Luft Balons",
     'nick' => "Needle", 
     'email' => 'needle@composers.org', 

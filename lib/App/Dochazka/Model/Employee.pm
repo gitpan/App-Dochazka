@@ -37,9 +37,9 @@ use strict;
 use warnings FATAL => 'all';
 
 use App::Dochazka::Model;
-use constant ATTRS => qw( eid fullname nick email passhash salt remark );
+use constant ATTRS => qw( eid sec_id fullname nick email passhash salt remark );
 
-our $VERSION = '0.184';
+our $VERSION = '0.185';
 
 BEGIN {
     App::Dochazka::Model::boilerplate( __PACKAGE__, ATTRS );
